@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"stori-card-challenge-account/utils"
 
@@ -51,18 +52,27 @@ func HandleAPIGatewayProxyRequest(ctx context.Context, r events.APIGatewayProxyR
 		}, nil
 	}
 	// Create an AWS session
-	session, err := session.NewSession(&aws.Config{
+	_, err = session.NewSession(&aws.Config{
 		Region:      aws.String(config.AWSRegion),
 		Credentials: credentials.NewStaticCredentials(os.Getenv("aws_access_key"), os.Getenv("aws_secret_key"), ""),
 	})
-	fmt.Print(session)
 	if err != nil {
-		fmt.Println("Error creating session:", err)
+		log.Print("Error creating session:", err)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "broken!",
 		}, nil
 	}
+	_, err = utils.CreateDBConnection()
+
+	if err != nil {
+		log.Print("Error connecting to db:", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "cannot connect to db!",
+		}, nil
+	}
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       "user has been created",
@@ -79,3 +89,5 @@ func validateRequestModel(rb RequestBody) string {
 	}
 	return ""
 }
+
+//func initializeAccountRepository()

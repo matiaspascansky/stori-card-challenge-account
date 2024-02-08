@@ -1,7 +1,9 @@
 package account
 
 import (
+	usr "stori-card-challenge-account/domain/user"
 	"stori-card-challenge-account/utils"
+
 	"time"
 )
 
@@ -24,7 +26,7 @@ type Account struct {
 	DateCreated  time.Time `json:"date_created"`
 	Status       string    `json:"status"`
 	TotalBalance float64   `json:"total_balance"`
-	UserId       int64     `json:"user_id"`
+	User         usr.User  `json:"user"`
 }
 
 func NewAccountForUser(userId int64) Account {
