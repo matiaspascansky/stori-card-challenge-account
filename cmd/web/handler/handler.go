@@ -6,6 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"stori-card-challenge-account/domain/account"
+	"stori-card-challenge-account/domain/user"
+	accountInfra "stori-card-challenge-account/internal/infrastructure/account"
+	usecases "stori-card-challenge-account/internal/usecases/account"
 	"stori-card-challenge-account/utils"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -26,14 +30,6 @@ type RequestBody struct {
 // HandleAPIGatewayProxyRequest is the Lambda handler function.
 func HandleAPIGatewayProxyRequest(ctx context.Context, r events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	var requestBody RequestBody
-	if err := json.Unmarshal([]byte(r.Body), &requestBody); err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: 400,
-			Body:       "Wrong type of request",
-		}, nil
-	}
-
 	// Read AWS configuration from JSON file
 	config, err := utils.ReadAWSConfig(aws_config_path)
 	if err != nil {
@@ -43,7 +39,13 @@ func HandleAPIGatewayProxyRequest(ctx context.Context, r events.APIGatewayProxyR
 			Body:       "broken!",
 		}, nil
 	}
-
+	var requestBody RequestBody
+	if err := json.Unmarshal([]byte(r.Body), &requestBody); err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 400,
+			Body:       "Wrong type of request",
+		}, nil
+	}
 	msg := validateRequestModel(requestBody)
 	if msg != "" {
 		return events.APIGatewayProxyResponse{
@@ -52,7 +54,7 @@ func HandleAPIGatewayProxyRequest(ctx context.Context, r events.APIGatewayProxyR
 		}, nil
 	}
 	// Create an AWS session
-	_, err = session.NewSession(&aws.Config{
+	sess, err := session.NewSession(&aws.Config{
 		Region:      aws.String(config.AWSRegion),
 		Credentials: credentials.NewStaticCredentials(os.Getenv("aws_access_key"), os.Getenv("aws_secret_key"), ""),
 	})
@@ -63,13 +65,19 @@ func HandleAPIGatewayProxyRequest(ctx context.Context, r events.APIGatewayProxyR
 			Body:       "broken!",
 		}, nil
 	}
-	_, err = utils.CreateDBConnection()
+	dynamoClient := utils.CreateDBConnection(sess)
+	log.Print("dynamo client", dynamoClient)
+	log.Print("dynamo table: ", config.DynamoTable)
+	saveAccountRepository := accountInfra.NewAccountDBRepository(dynamoClient, config.DynamoTable)
+	saveAccountUsecase := usecases.NewSaveAccountUsecase(saveAccountRepository)
 
+	saveAccountModel := createUserAccount(requestBody)
+
+	err = saveAccountUsecase.Execute(ctx, saveAccountModel)
 	if err != nil {
-		log.Print("Error connecting to db:", err)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
-			Body:       "cannot connect to db!",
+			Body:       err.Error(),
 		}, nil
 	}
 
@@ -90,4 +98,9 @@ func validateRequestModel(rb RequestBody) string {
 	return ""
 }
 
-//func initializeAccountRepository()
+func createUserAccount(rb RequestBody) *account.Account {
+	usr := user.NewUser(rb.FirstName, rb.LastName)
+
+	return account.NewAccountForUser(usr)
+
+}

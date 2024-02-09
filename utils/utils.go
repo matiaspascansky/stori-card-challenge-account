@@ -2,35 +2,23 @@ package utils
 
 import (
 	"math/rand"
-	"sync"
 	"time"
 )
 
-const (
-	letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	idLength    = 10
-)
-
-// AccountIDGenerator provides auto-incremented alphanumeric strings for account IDs
-type AccountIDGenerator struct {
-	mutex sync.Mutex
-	rand  *rand.Rand
+type UserIDGenerator struct {
 }
 
-// NewAccountIDGenerator creates a new instance of AccountIDGenerator
-func NewAccountIDGenerator() *AccountIDGenerator {
-	return &AccountIDGenerator{
-		rand: rand.New(rand.NewSource(time.Now().UnixNano())),
-	}
+func NewUserIDGenerator() *UserIDGenerator {
+	return &UserIDGenerator{}
 }
 
-// GenerateID generates a new auto-incremented alphanumeric string
-func (g *AccountIDGenerator) GenerateID() string {
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
-	b := make([]byte, idLength)
-	for i := range b {
-		b[i] = letterBytes[g.rand.Intn(len(letterBytes))]
-	}
-	return string(b)
+func (g *UserIDGenerator) GenerateID() int64 {
+	rand.Seed(time.Now().UnixNano())
+
+	// Generate a random 6-digit integer
+	randomInt := rand.Intn(900000) + 100000
+
+	// Convert the random integer to int64
+	id := int64(randomInt)
+	return id
 }

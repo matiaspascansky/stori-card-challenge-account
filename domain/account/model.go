@@ -2,9 +2,10 @@ package account
 
 import (
 	usr "stori-card-challenge-account/domain/user"
-	"stori-card-challenge-account/utils"
 
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Status int
@@ -29,11 +30,12 @@ type Account struct {
 	User         usr.User  `json:"user"`
 }
 
-func NewAccountForUser(userId int64) Account {
-	idGenerator := utils.NewAccountIDGenerator()
-	return Account{
-		Id:          idGenerator.GenerateID(),
-		DateCreated: time.Now().UTC(),
-		Status:      statusStrings[Inactive],
+func NewAccountForUser(user usr.User) *Account {
+	return &Account{
+		Id:           uuid.New().String(),
+		DateCreated:  time.Now().UTC(),
+		Status:       statusStrings[Inactive],
+		TotalBalance: 0,
+		User:         user,
 	}
 }

@@ -6,13 +6,13 @@ import (
 )
 
 type AccountDTO struct {
-	Id            string    `json:"id"`
-	DateCreated   time.Time `json:"date_created"`
-	Status        string    `json:"status"`
-	TotalBalance  float64   `json:"total_balance"`
-	UserID        int64     `json:"user_id"`
-	UserFirstName string    `json:"user_first_name"`
-	UserLastName  string    `json:"user_last_name"`
+	Id            string    `json:"id" dynamodbav:"id"`
+	DateCreated   time.Time `json:"date_created" dynamodbav:"date_created"`
+	Status        string    `json:"status" dynamodbav:"status"`
+	TotalBalance  float64   `json:"total_balance" dynamodbav:"total_balance"`
+	UserID        int64     `json:"user_id" dynamodbav:"user_id"`
+	UserFirstName string    `json:"user_first_name" dynamodbav:"user_first_name"`
+	UserLastName  string    `json:"user_last_name" dynamodbav:"user_last_name"`
 }
 
 func FromAccountToDTO(a *account.Account) *AccountDTO {

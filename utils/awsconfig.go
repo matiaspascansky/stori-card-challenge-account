@@ -6,9 +6,8 @@ import (
 )
 
 type AWSConfig struct {
-	AWSRegion string    `json:"aws_region"`
-	RdsConfig RdsConfig `json:"s3_bucket"`
-	ObjectKey string    `json:"object_key"`
+	AWSRegion   string `json:"aws_region"`
+	DynamoTable string `json:"dynamo_table"`
 }
 
 type RdsConfig struct {
