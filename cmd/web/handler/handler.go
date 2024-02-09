@@ -23,8 +23,10 @@ const (
 )
 
 type RequestBody struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName    string  `json:"first_name"`
+	LastName     string  `json:"last_name"`
+	TotalBalance float64 `json:"total_balance"`
+	Status       string  `json:"status"`
 }
 
 // HandleAPIGatewayProxyRequest is the Lambda handler function.
@@ -66,8 +68,7 @@ func HandleAPIGatewayProxyRequest(ctx context.Context, r events.APIGatewayProxyR
 		}, nil
 	}
 	dynamoClient := utils.CreateDBConnection(sess)
-	log.Print("dynamo client", dynamoClient)
-	log.Print("dynamo table: ", config.DynamoTable)
+
 	saveAccountRepository := accountInfra.NewAccountDBRepository(dynamoClient, config.DynamoTable)
 	saveAccountUsecase := usecases.NewSaveAccountUsecase(saveAccountRepository)
 
@@ -95,12 +96,17 @@ func validateRequestModel(rb RequestBody) string {
 	if rb.LastName == "" {
 		return "missing last name"
 	}
+
+	if rb.Status == "" {
+		return "missing status"
+	}
+
 	return ""
 }
 
 func createUserAccount(rb RequestBody) *account.Account {
 	usr := user.NewUser(rb.FirstName, rb.LastName)
 
-	return account.NewAccountForUser(usr)
+	return account.NewAccountForUser(usr, rb.Status, rb.TotalBalance)
 
 }

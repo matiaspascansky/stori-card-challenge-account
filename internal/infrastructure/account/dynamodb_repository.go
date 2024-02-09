@@ -3,7 +3,6 @@ package account
 import (
 	"context"
 	"log"
-
 	"stori-card-challenge-account/domain/account"
 
 	"github.com/aws/aws-sdk-go/aws"

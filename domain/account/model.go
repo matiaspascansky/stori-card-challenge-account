@@ -30,12 +30,12 @@ type Account struct {
 	User         usr.User  `json:"user"`
 }
 
-func NewAccountForUser(user usr.User) *Account {
+func NewAccountForUser(user usr.User, status string, totalBalance float64) *Account {
 	return &Account{
 		Id:           uuid.New().String(),
 		DateCreated:  time.Now().UTC(),
-		Status:       statusStrings[Inactive],
-		TotalBalance: 0,
+		Status:       "esto lo hardcodeo por ahora",
+		TotalBalance: totalBalance,
 		User:         user,
 	}
 }
