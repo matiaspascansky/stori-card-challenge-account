@@ -67,6 +67,7 @@ func HandleAPIGatewayProxyRequest(ctx context.Context, r events.APIGatewayProxyR
 			Body:       "broken!",
 		}, nil
 	}
+
 	dynamoClient := utils.CreateDBConnection(sess)
 
 	saveAccountRepository := accountInfra.NewAccountDBRepository(dynamoClient, config.DynamoTable)
