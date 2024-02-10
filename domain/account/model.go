@@ -34,7 +34,7 @@ func NewAccountForUser(user usr.User, status string, totalBalance float64) *Acco
 	return &Account{
 		Id:           uuid.New().String(),
 		DateCreated:  time.Now().UTC(),
-		Status:       "esto lo hardcodeo por ahora",
+		Status:       status,
 		TotalBalance: totalBalance,
 		User:         user,
 	}
