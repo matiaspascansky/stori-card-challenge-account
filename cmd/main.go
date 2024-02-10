@@ -8,10 +8,7 @@ import (
 
 func main() {
 
-	/*user := user.NewMockIDUser("matias", "pascansky")
+	//lambda.Start(handler.HandleAPIGatewayProxyRequest)
+	lambda.Start(handler.HandleSNS)
 
-	acc := account.NewAccountForUser(user.ID)*/
-	lambda.Start(handler.HandleAPIGatewayProxyRequest)
-
-	//fmt.Print("hello", user.FirstName, "you have created an account with id: ", acc.Id, " and the status is: ", acc.Status)
 }
