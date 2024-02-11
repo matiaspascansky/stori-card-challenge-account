@@ -1,4 +1,4 @@
-package test
+package usecases
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"stori-card-challenge-account/domain/account"
 	"stori-card-challenge-account/domain/user"
 	"stori-card-challenge-account/internal/infrastructure/account/mocks"
-	usecases "stori-card-challenge-account/internal/usecases/account"
 	"testing"
 	"time"
 
@@ -56,7 +55,7 @@ func (s *SaveAccountTestSuite) Test_Save_Account() {
 
 		s.accountRepo.On("SaveUserAccount", s.ctx, mockAccount).Return(nil)
 
-		saveAccountUsecase := usecases.NewSaveAccountUsecase(s.accountRepo)
+		saveAccountUsecase := NewSaveAccountUsecase(s.accountRepo)
 
 		err := saveAccountUsecase.Execute(s.ctx, mockAccount)
 
@@ -83,7 +82,7 @@ func (s *SaveAccountTestSuite) Test_Save_Account() {
 			TotalBalance: 100.32,
 		}
 
-		saveAccountUsecase := usecases.NewSaveAccountUsecase(s.accountRepo)
+		saveAccountUsecase := NewSaveAccountUsecase(s.accountRepo)
 
 		err := saveAccountUsecase.Execute(s.ctx, mockAccount)
 
@@ -108,7 +107,7 @@ func (s *SaveAccountTestSuite) Test_Save_Account() {
 			DateCreated:  time.Now().UTC(),
 		}
 
-		saveAccountUsecase := usecases.NewSaveAccountUsecase(s.accountRepo)
+		saveAccountUsecase := NewSaveAccountUsecase(s.accountRepo)
 
 		err := saveAccountUsecase.Execute(s.ctx, mockAccount)
 
@@ -133,7 +132,7 @@ func (s *SaveAccountTestSuite) Test_Save_Account() {
 			DateCreated:  time.Now().UTC(),
 		}
 
-		saveAccountUsecase := usecases.NewSaveAccountUsecase(s.accountRepo)
+		saveAccountUsecase := NewSaveAccountUsecase(s.accountRepo)
 
 		err := saveAccountUsecase.Execute(s.ctx, mockAccount)
 
@@ -162,7 +161,7 @@ func (s *SaveAccountTestSuite) Test_Save_Account() {
 
 		s.accountRepo.On("SaveUserAccount", s.ctx, mockAccount).Return(errors.New("foo"))
 
-		saveAccountUsecase := usecases.NewSaveAccountUsecase(s.accountRepo)
+		saveAccountUsecase := NewSaveAccountUsecase(s.accountRepo)
 
 		err := saveAccountUsecase.Execute(s.ctx, mockAccount)
 

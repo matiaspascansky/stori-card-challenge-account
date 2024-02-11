@@ -1,7 +1,6 @@
 package account
 
 import (
-	"stori-card-challenge-account/domain/account"
 	"stori-card-challenge-account/domain/user"
 	"testing"
 
@@ -18,7 +17,7 @@ func TestNewAccountForUser(t *testing.T) {
 	totalBalance := 1000.00
 	status := "debt-free"
 
-	acc := account.NewAccountForUser(u, status, float64(totalBalance))
+	acc := NewAccountForUser(u, status, float64(totalBalance))
 
 	assert.Equal(t, u.ID, acc.User.ID)
 	assert.Equal(t, u.FirstName, acc.User.FirstName)
